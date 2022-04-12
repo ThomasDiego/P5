@@ -6,7 +6,7 @@ function allProducts() {
   }).then(function (value) {
     return value
   }).catch((error) => {
-    document.getElementById("items").innerHTML = `<h2>Erreur avec l'api</h2>`;
+    window.location.href = "./index.html"
   });
   return infos
 };

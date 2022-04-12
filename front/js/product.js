@@ -30,7 +30,10 @@ function getProduct(id) {
         //Prix du produit
         document.getElementById("price").textContent = value.price;
         //Description du produit
+
         document.getElementById("description").textContent = value.description;
+        //Quantité produit MINIMUM 1
+        document.querySelector("#quantity").value = 1;
         //Couleurs produit
         let colorsProduct = value.colors;
         colorsProduct.forEach(element => {
@@ -39,6 +42,7 @@ function getProduct(id) {
             colors.innerHTML += colorHtml;
         });
     })
+    verifyQuantity()
 }
 
 getProduct(getId);
@@ -84,7 +88,16 @@ async function addProduct() {
     return addProduct;
 }
 
-
+function verifyQuantity() {
+    let quant = document.getElementById("quantity");
+    quant.addEventListener("input", function () {
+        let quantVal = quant.value;
+        if (quantVal > 100 || quantVal <= 0 || isNaN(quantVal) || quantVal.includes(".")) {
+            console.log("hihi")
+            document.querySelector("#quantity").value = 1;
+        }
+    })
+}
 
 document.getElementById('addToCart').addEventListener("click", function (event) {
     addProduct().then(function (value) {
