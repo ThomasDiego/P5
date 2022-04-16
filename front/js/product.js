@@ -1,14 +1,15 @@
 let params = (new URL(document.location)).searchParams;
 let getId = params.get('id');
 
+//Recupérer les informations de l'article dans l'url params ?id=
 function getProductInfos(id) {
-    const infos = fetch("http://localhost:3000/api/products/" + id).then(function (res) {
+    const infos = fetch("http://localhost:3000/api/products/" + id).then(function(res) {
         if (res.ok) {
             return res.json();
         } else {
             window.location.href = "./index.html"
         }
-    }).then(function (value) {
+    }).then(function(value) {
         return value;
     }).catch((error) => {
         window.location.href = "./index.html"
@@ -16,16 +17,16 @@ function getProductInfos(id) {
     return infos;
 }
 
-
+//Afficher les informations du produit sur la page
 function getProduct(id) {
-    getProductInfos(getId).then(function (value) {
+    getProductInfos(getId).then(function(value) {
         //Titre de la page
         document.title = value.name;
         //Image du produit
         let itemImg = document.querySelector(".item__img");
         const itemImgHtml = `<img src="${value.imageUrl}" alt="${value.altTxt}">`;
         itemImg.innerHTML += itemImgHtml;
-        //Nom du produit
+        //Nom du produit 
         document.getElementById("title").textContent = value.name;
         //Prix du produit
         document.getElementById("price").textContent = value.price;
@@ -49,9 +50,9 @@ getProduct(getId);
 
 
 
-//Panier
+//Ajouter un article au panier
 async function addProduct() {
-    const addProduct = getProductInfos(getId).then(function (value) {
+    const addProduct = getProductInfos(getId).then(function(value) {
         let produit = {
             id: getId,
             quantity: document.getElementById("quantity").value,
@@ -60,8 +61,7 @@ async function addProduct() {
         //Verif couleur
         const itemsColors = [];
         itemsColors.push(value.colors);
-        if (itemsColors[0].includes(produit.color)) {
-        } else {
+        if (itemsColors[0].includes(produit.color)) {} else {
             return "error la couleur n'est pas dans la liste"
         }
         //Si quantité > 100
@@ -72,7 +72,13 @@ async function addProduct() {
         if (panierList) {
             let searchDuplicate = panierList.find(el => el.id === produit.id && el.color === produit.color);
             if (searchDuplicate) {
-                return "error (L'article est déjà dans le panier)"
+                let newQuantity = parseInt(searchDuplicate.quantity) + parseInt(produit.quantity);
+                if (newQuantity <= 100 && newQuantity > 0 && produit.quantity <= 100 && produit.quantity > 0) {
+                    searchDuplicate.quantity = newQuantity;
+                    localStorage.setItem("panier", JSON.stringify(panierList));
+                    return "Nouvelle quantité pour un article déjà dans le local storage, quantité: " + searchDuplicate.quantity;
+                }
+                return "error (Article déjà dans le local storage, quantité: " + searchDuplicate.quantity;
             } else {
                 panierList.push(produit);
                 localStorage.setItem("panier", JSON.stringify(panierList));
@@ -82,15 +88,15 @@ async function addProduct() {
             panierList.push(produit);
             localStorage.setItem("panier", JSON.stringify(panierList));
         }
-        //Si color existe
-        return "ok";
+        return "L'article n'était pas présent dans le local storage, et vient d'être ajouté";
     })
     return addProduct;
 }
 
+//Ecouter le changement d'état de l'input quantité, et vérifier que tout est bon.
 function verifyQuantity() {
     let quant = document.getElementById("quantity");
-    quant.addEventListener("input", function () {
+    quant.addEventListener("input", function() {
         let quantVal = quant.value;
         if (quantVal > 100 || quantVal <= 0 || isNaN(quantVal) || quantVal.includes(".")) {
             console.log("hihi")
@@ -99,8 +105,9 @@ function verifyQuantity() {
     })
 }
 
-document.getElementById('addToCart').addEventListener("click", function (event) {
-    addProduct().then(function (value) {
+//Event Listener click sur le bouton addToCart pour appeler la fonciton addProduct()
+document.getElementById('addToCart').addEventListener("click", function(event) {
+    addProduct().then(function(value) {
         console.log(value)
     })
 })
