@@ -16,7 +16,7 @@ function allProducts() {
           </a>`;
             items.innerHTML += htmlProduct;
         });
-    }).catch((error) => {
+    }).catch(() => {
         document.getElementById("items").innerHTML = `<h2>Erreur avec l'api</h2>`;
     });
 };

@@ -6,7 +6,7 @@ function allProducts() {
         }
     }).then(function(value) {
         return value
-    }).catch((error) => {
+    }).catch(() => {
         window.location.href = "./index.html"
     });
     return infos
@@ -200,7 +200,6 @@ function checkOrderDetails(event) {
             document.getElementById('emailErrorMsg').textContent = "";
         }
     }
-    let orderButton = document.getElementById("order");
     if (event.id === "order") {
         return "ok";
     }
